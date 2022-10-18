@@ -26,15 +26,15 @@
         int 21h
         
         cmp al,031h
-        jmp ADICAO
+        je ADICAO
 
-        cmp al,2
-        jmp SUBTRACAO
+        cmp al,032h
+        je SUBTRACAO2
 
-        cmp al,3
-        jmp MULTIPLICACAO
+        cmp al,033h
+        jmp MULTIPLICACAO2
 
-        cmp al,3
+        cmp al,034h
         jmp DIVICAO
 
         ADICAO:
@@ -46,8 +46,8 @@
         mov ah,01
         int 21h
 
-        cmp al,1
-        jmp DOISDIG
+        cmp al,031h
+        je DOISDIG
 
         mov ah,09
         mov dx,offset msg3           ;printa a mensagem
@@ -82,6 +82,14 @@
         mov dl,cl
         mov ah,02
         int 21h
+
+        jmp FIM
+
+        SUBTRACAO2:
+        jmp SUBTRACAO
+
+        MULTIPLICACAO2:
+        jmp MULTIPLICACAO
 
         DOISDIG:
 
@@ -139,6 +147,7 @@
             
             
         SUBTRACAO:
+            mov al,1
 
         MULTIPLICACAO:
 
@@ -147,7 +156,9 @@
 
 
 
-
+        FIM:
+            mov ah,4ch
+            int 21h
 
     main ENDP
 end main
