@@ -1,6 +1,6 @@
 .MODEL SMALL
 .DATA
-    msg1 db "1 - Soma",10,"2 - Subtracao",10,"3 - Multiplicacao",10,"4 - Divicao",10,"$"
+    msg1 db "1 - Soma",10,"2 - Subtracao",10,"3 - Multiplicacao",10,"4 - Diviao",10,"$"
     msg2 db "Qual operacao:",10,"$"
     msg3 db 10,"Primeiro numero: $"
     msg4 db 10,"Segundo numero: $"
@@ -32,61 +32,63 @@
         je SUBTRACAO
 
         cmp al,033h
-        ;je MULTIPLICACAO
+        je MULTIPLICACAO1
+        MULTIPLICACAO1:
+            jmp MULTIPLICACAO
 
         cmp al,034h
         ;je DIVICAO
 
         ADICAO:
         
-        mov ah,09
-        mov dx,offset msg3           ;printa a mensagem
-        int 21h
+            mov ah,09
+            mov dx,offset msg3           ;printa a mensagem
+            int 21h
 
-        mov ah,01
-        int 21h
+            mov ah,01
+            int 21h
 
-        mov bl,al
+            mov bl,al
 
-        mov ah,09
-        mov dx,offset msg4           ;printa a mensagem
-        int 21h
+            mov ah,09
+            mov dx,offset msg4           ;printa a mensagem
+            int 21h
 
-        mov ah,01
-        int 21h
-
-        
-
-        and bl,0fh
-        and al,0fh
-
-        add bl,al
-        xor ax,ax
-        mov al,bl
-        
-        mov dl,10
-        div dl
-        
-        mov cl,ah
-        mov bl,al
-
-        mov ah,09
-        mov dx,offset msg5           ;printa a mensagem
-        int 21h
+            mov ah,01
+            int 21h
 
         
 
-        add bl,030h
-        mov dl,bl
-        mov ah,02
-        int 21h
+            and bl,0fh
+            and al,0fh
 
-        add cl,030h
-        mov dl,cl
-        mov ah,02
-        int 21h
+            add bl,al
+            xor ax,ax
+            mov al,bl
+        
+            mov dl,10
+            div dl
+        
+            mov cl,ah
+            mov bl,al
 
-        jmp FIM
+            mov ah,09
+            mov dx,offset msg5           ;printa a mensagem
+            int 21h
+
+        
+
+            add bl,030h
+            mov dl,bl
+            mov ah,02
+            int 21h
+
+            add cl,030h
+            mov dl,cl
+            mov ah,02
+            int 21h
+
+            jmp FIM
               
         SUBTRACAO:
 
@@ -152,17 +154,210 @@
 
 
         MULTIPLICACAO:
-            mov al,1
 
+            mov ah,09
+            mov dx,offset msg3           ;printa a mensagem
+            int 21h
+
+            mov ah,01
+            int 21h
+            mov bl,al
+            and bl,0fh
+
+            mov ah,09
+            mov dx,offset msg4           ;printa a mensagem
+            int 21h
+
+            mov ah,01
+            int 21h
+
+            mov cl,al
+            and cl,0fh
+
+            cmp cl,9
+            je NOVE1
+
+            
+            cmp cl,4
+            jg MAIOR4_2
+
+            cmp cl,4
+            jle ME_IG_4
+
+
+            MAIOR4_2:
+                jmp MAIOR4
+
+            NOVE1:
+                jmp NOVE
+
+            ME_IG_2:
+
+                cmp cl,0
+                je ZERO
+
+                mov bh,bl
+                shl bl,1
+                xor ax,ax
+                mov al,2
+                mov dl,cl
+                div dl
+                
+                cmp al,2
+                je PULA2   
+                
+                cmp ah,0
+                je PULA
+
+               
+                PULA2:
+                    sub bl,bh
+                    dec ah
+                
+
+                PULA:
+                    xor ax,ax
+                    mov al,bl
+                    mov dl,10
+                    div dl
+
+                    mov bl,al
+                    mov bh,ah
+
+                    mov ah,09
+                    mov dx,offset msg5           ;printa a mensagem
+                    int 21h
+                
+                    mov dl,bl
+                    add dl,30h
+                    mov ah,02
+                    int 21h
+
+                    mov dl,bh
+                    add dl,30h
+                    mov ah,02
+                    int 21h
+                    jmp FIM
+            
+            ZERO:
+
+                mov ah,09
+                mov dx,offset msg5           ;printa a mensagem
+                int 21h
+
+                mov dl,30h
+                mov ah,02
+                int 21h
+                jmp FIM
+
+            ME_IG_4:
+                cmp cl,2
+                jle ME_IG_2
+
+                mov bh,bl
+                shl bl,2
+                xor ax,ax
+                mov al,4
+                mov dl,cl
+                div dl
+                VOLTA2:
+                    sub bl,bh
+                    dec ah
+                    cmp ah,0
+                    jne VOLTA2
+
+                xor ax,ax
+                mov al,bl
+                mov dl,10
+                div dl
+
+                mov bl,al
+                mov bh,ah
+
+                mov ah,09
+                mov dx,offset msg5           ;printa a mensagem
+                int 21h
+                
+                mov dl,bl
+                add dl,30h
+                mov ah,02
+                int 21h
+
+                mov dl,bh
+                add dl,30h
+                mov ah,02
+                int 21h
+                jmp FIM
+
+
+            MAIOR4:
+                mov bh,bl
+                shl bl,3
+                xor ax,ax
+                mov al,8
+                mov dl,cl
+                div dl
+
+                VOLTA:
+                    sub bl,bh
+                    dec ah
+                    cmp ah,0
+                    jne VOLTA
+
+                xor ax,ax
+                mov al,bl
+                mov dl,10
+                div dl
+
+                mov bl,al
+                mov bh,ah
+
+                mov ah,09
+                mov dx,offset msg5           ;printa a mensagem
+                int 21h
+                
+                mov dl,bl
+                add dl,30h
+                mov ah,02
+                int 21h
+
+                mov dl,bh
+                add dl,30h
+                mov ah,02
+                int 21h
+                jmp FIM
+
+            NOVE:
+
+                mov bh,bl
+                shl bl,3
+                add bl,bh
+
+                xor ax,ax
+                mov al,bl
+                mov dl,10
+                div dl
+
+                mov bl,al
+                mov bh,ah
+
+                mov ah,09
+                mov dx,offset msg5           ;printa a mensagem
+                int 21h
+                
+                mov dl,bl
+                add dl,30h
+                mov ah,02
+                int 21h
+
+                mov dl,bh
+                add dl,30h
+                mov ah,02
+                int 21h
+                jmp FIM
 
         DIVICAO:
-            mov al,1
-
-        
-
-
-
-
+           
         FIM:
             mov ah,4ch
             int 21h
