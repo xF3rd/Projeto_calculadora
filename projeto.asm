@@ -1,18 +1,23 @@
 .MODEL SMALL
 .DATA
-    msg1 db "1 - Soma",10,"2 - Subtracao",10,"3 - Multiplicacao",10,"4 - Diviao",10,"$"
+    msg1 db "1 - Soma",10,"2 - Subtracao",10,"3 - Multiplicacao",10,"4 - Divicao",10,"$"
     msg2 db "Qual operacao:",10,"$"
     msg3 db 10,"Primeiro numero: $"
     msg4 db 10,"Segundo numero: $"
     msg5 db 10,"Resultado:$"
     msg6 db "-$"
+    msg7 db 10,"Resultado: 0$"
+    msg8 db 10,"Resultado: 1$"
+    msg9 db 10,"Nao existe divisao por zero ",10,"Tente novamente$"
+    
+
 
 
 
 .CODE
     main PROC
         MOV AX,@DATA
-        MOV ds,ax           ;inicia o DATA
+        MOV ds,ax   ;inicia o DATA
 
         mov ah,09
         mov dx,offset msg2           ;printa a mensagem
@@ -33,11 +38,18 @@
 
         cmp al,033h
         je MULTIPLICACAO1
-        MULTIPLICACAO1:
-            jmp MULTIPLICACAO
+        
 
         cmp al,034h
-        ;je DIVICAO
+        je DIVICAO1
+
+        MULTIPLICACAO1:
+        
+        
+            jmp MULTIPLICACAO
+
+        DIVICAO1:
+            jmp DIVICAO
 
         ADICAO:
         
@@ -355,9 +367,56 @@
                 mov ah,02
                 int 21h
                 jmp FIM
+            
+
+
 
         DIVICAO:
-           
+
+            NOVAMENTE:
+                
+                mov ah,09
+                mov dx,offset msg3           ;printa a mensagem
+                int 21h
+
+                mov ah,01
+                int 21h                        ;pega primeiro numero
+                mov bl,al
+                and bl,0fh
+
+                mov ah,09
+                mov dx,offset msg4           ;printa a mensagem
+                int 21h
+
+                mov ah,01
+                int 21h                        ;pega segundo numero
+
+                mov cl,al
+                and cl,0fh
+
+                cmp cl,bl
+                jg ZERO_DIV
+
+                cmp cl,0
+                je ERRADO
+
+                
+
+        ZERO_DIV:
+
+                mov ah,09
+                mov dx,offset msg7           ;printa a mensagem
+                int 21h
+
+                jmp FIM
+
+        ERRADO:
+                mov ah,09
+                mov dx,offset msg9           ;printa a mensagem
+                int 21h
+
+                jmp NOVAMENTE
+
         FIM:
             mov ah,4ch
             int 21h
