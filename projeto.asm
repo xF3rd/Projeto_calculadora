@@ -1,4 +1,4 @@
-TITLE Fernando Bordin Correa RA:20098174 
+TITLE Fernando Bordin Correa RA:20098174 // Igor Cohen da Cunha RA:21012185
 .MODEL SMALL
 .DATA
     msg1 db 10,"1 - Soma",10,"2 - Subtracao",10,"3 - Multiplicacao",10,"4 - Divicao",10,"$"
