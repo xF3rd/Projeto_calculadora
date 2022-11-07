@@ -1,6 +1,7 @@
+TITLE Fernando Bordin Correa RA:20098174 
 .MODEL SMALL
 .DATA
-    msg1 db "1 - Soma",10,"2 - Subtracao",10,"3 - Multiplicacao",10,"4 - Divicao",10,"$"
+    msg1 db 10,"1 - Soma",10,"2 - Subtracao",10,"3 - Multiplicacao",10,"4 - Divicao",10,"$"
     msg2 db "Qual operacao:",10,"$"
     msg3 db 10,"Primeiro numero: $"
     msg4 db 10,"Segundo numero: $"
@@ -10,15 +11,16 @@
     msg8 db 10,"Resultado: 1$"
     msg9 db 10,"Nao existe divisao por zero ",10,"Tente novamente$"
     msg10 db 10,"Resto:$"
+    msg11 db 10,10,"Quer continuar",10," 1=sim 2=nao",10,"$"
+    msg12 db 10,"Nenhuma operacao escolhida",10,"$"
     
-
-
-
 
 .CODE
     main PROC
         MOV AX,@DATA
         MOV ds,ax   ;inicia o DATA
+
+        NOVAMENTE2:
 
         mov ah,09
         mov dx,offset msg2           ;printa a mensagem
@@ -42,6 +44,8 @@
         
         cmp al,034h
         je DIVICAO1
+
+        jmp  ERRADO2
 
         MULTIPLICACAO1:
         
@@ -69,8 +73,6 @@
             mov ah,01                    ;pega numero do usuario
             int 21h
 
-        
-
             and bl,0fh
             and al,0fh                    ;transforma ascii em numero
 
@@ -87,8 +89,6 @@
             mov ah,09
             mov dx,offset msg5           ;printa a mensagem
             int 21h
-
-        
 
             add bl,030h
             mov dl,bl                    ;transforma e printa o resultado
@@ -129,7 +129,6 @@
 
             add bl,030h                 ;transforma em ascii
 
-
             mov ah,09
             mov dx,offset msg5           ;printa a mensagem
             int 21h
@@ -147,7 +146,6 @@
             neg bl                      ;inverte o numero
             add bl,030h                 ;trasforma em ascii
 
-
             mov ah,09
             mov dx,offset msg5           ;printa a mensagem
             int 21h
@@ -162,8 +160,6 @@
             int 21h
 
             jmp FIM                     ;pula para o fim do programa
-
-
 
         MULTIPLICACAO:
 
@@ -188,13 +184,11 @@
             cmp cl,9                    ;compara com nove
             je NOVE1
 
-            
             cmp cl,4
             jg MAIOR4_2                 ;ve se o numero e maior que 4
 
             cmp cl,4
             jle ME_IG_4                 ;ve se o numero e menor igual a que 4
-
 
             MAIOR4_2:
                 jmp MAIOR4              ;como je tem limite de distancia e presciso pular para jmp especifico 
@@ -221,7 +215,6 @@
                 cmp ah,0                 ;compara o resto com 0
                 je PULA
 
-               
                 PULA2:
                     sub bl,bh           ;subtrai o numero mexido por ele inicialmente
 
@@ -272,7 +265,7 @@
                 div dl
                 cmp ah,0            ;verifica se o resto e 0
                 je PULA3            ;pula se for 0 
-                
+
                 VOLTA2:
                     sub bl,bh
                     dec ah          ;subtrai o numero mudado por ele inicial,faz n vezes igual ao resto
@@ -302,7 +295,6 @@
                 int 21h
 
                 jmp FIM                 ;pula para o fim do programa
-
 
             MAIOR4:
                 mov bh,bl               ;salva o numero inicial
@@ -377,7 +369,6 @@
 
                 jmp FIM                 ;pula para o fim do programa
             
-
         DIVICAO:
 
             NOVAMENTE:
@@ -413,8 +404,6 @@
                 mov al,bl       ;move o segundo numero para al
                 xor dl,dl       ;limpa dl 
                 xor bx,bx       ;limpa dl
-
-
 
                 mov cx,9       ;contador vai para 9
 
@@ -457,8 +446,6 @@
                 jmp FIM                     ;pula para o fim do programa
 
 
-                
-
                 ZERO_DIV:
 
                     mov ah,09
@@ -485,8 +472,32 @@
                     jmp NOVAMENTE                   
 
     FIM:
+
+        mov ah,09
+        mov dx,offset msg11          ;printa a mensagem
+        int 21h
+
+        mov ah,01                     ;pega numero do usuario
+        int 21h
+
+        cmp al,031h
+        je NOVAMENTE2_1
+
         mov ah,4ch          ;finaliza o programa 
         int 21h
+
+        NOVAMENTE2_1:
+        
+            jmp NOVAMENTE2
+
+        ERRADO2:
+
+            mov ah,09
+            mov dx,offset msg12          ;printa a mensagem
+            int 21h
+            jmp NOVAMENTE2
+
+
 
     main ENDP
 end main
