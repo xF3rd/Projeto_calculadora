@@ -6,13 +6,19 @@
     msg4 db 10,"Segundo numero: $"
     msg5 db 10,"Resultado:$"
     msg6 db "-$"
+    msg7 db 10,"Resultado: 0$"
+    msg8 db 10,"Resultado: 1$"
+    msg9 db 10,"Nao existe divisao por zero ",10,"Tente novamente$"
+    msg10 db 10,"Resto:$"
+    
+
 
 
 
 .CODE
     main PROC
         MOV AX,@DATA
-        MOV ds,ax           ;inicia o DATA
+        MOV ds,ax   ;inicia o DATA
 
         mov ah,09
         mov dx,offset msg2           ;printa a mensagem
@@ -22,22 +28,28 @@
         mov dx,offset msg1           ;printa a mensagem
         int 21h
 
-        mov ah,01
+        mov ah,01                     ;pega numero do usuario
         int 21h
         
         cmp al,031h
         je ADICAO
 
         cmp al,032h
-        je SUBTRACAO
+        je SUBTRACAO                   ;faz comparacoes para saber qual operacao foi escolhida 
 
         cmp al,033h
         je MULTIPLICACAO1
-        MULTIPLICACAO1:
-            jmp MULTIPLICACAO
 
         cmp al,034h
-        ;je DIVICAO
+        je DIVICAO1
+
+        MULTIPLICACAO1:
+        
+        
+            jmp MULTIPLICACAO           ;como je tem limite de distancia e presciso pular para jmp especifico para ai sim ir para a operaçao em si
+
+        DIVICAO1:
+            jmp DIVICAO                 ;como je tem limite de distancia e presciso pular para jmp especifico para ai sim ir para a operaçao em si
 
         ADICAO:
         
@@ -45,7 +57,8 @@
             mov dx,offset msg3           ;printa a mensagem
             int 21h
 
-            mov ah,01
+
+            mov ah,01                     ;pega numero do usuario
             int 21h
 
             mov bl,al
@@ -54,13 +67,17 @@
             mov dx,offset msg4           ;printa a mensagem
             int 21h
 
-            mov ah,01
+
+            mov ah,01                    ;pega numero do usuario
+
             int 21h
 
         
 
             and bl,0fh
-            and al,0fh
+
+            and al,0fh                    ;transforrma ascii em numero
+
 
             add bl,al
             xor ax,ax
@@ -154,6 +171,7 @@
 
 
         MULTIPLICACAO:
+
 
             mov ah,09
             mov dx,offset msg3           ;printa a mensagem
@@ -357,13 +375,126 @@
                 jmp FIM
             
 
+            mov ah,09
+            mov dx,offset msg3           ;printa a mensagem
+            int 21h
 
+            mov ah,01
+            int 21h
+            mov bl,al
+            and bl,0fh
 
         DIVICAO:
-           
-        FIM:
-            mov ah,4ch
-            int 21h
+
+            NOVAMENTE:
+                
+                mov ah,09
+                mov dx,offset msg3           ;printa a mensagem
+                int 21h
+
+                mov ah,01
+                int 21h                        ;pega primeiro numero
+                mov bl,al
+                and bl,0fh
+
+
+                mov ah,09
+                mov dx,offset msg4              ;printa a mensagem
+                int 21h
+
+                mov ah,01
+                int 21h                        ;pega segundo numero
+
+
+                mov cl,al
+                and cl,0fh
+
+                cmp cl,bl
+                jg ZERO_DIV
+
+                cmp cl,0
+                je ERRADO
+
+                mov dh,cl       ;<---- move o divisor para dh
+
+                xor ax,ax       ;<---- zera ax para armazenar o dividendo
+                mov al,bl       ;<---- move o dividendo para al
+                xor dl,dl       ;<---- zera dl para poder manipular o divisor 
+                xor bx,bx       ;<---- zera bx para armazenar o resultado
+
+
+
+                mov cx,9       ;<----- adiciona 9 no contador para trabalhar com 9 bits
+
+                DIV_1:
+                sub ax,dx      ;<----- subtrai divisor do dividendo
+                jns MENOS_1      ;<----- se o resultado da divisão não for negativo não reverte o processo
+                add ax,dx      ;<----- reverte o processo 
+                mov bh,0       ;<----- adiciona 0 nos bits do resultado
+                jmp MENOS_2      ;<----- pula para 
+
+                MENOS_1:
+                mov bh,1       ;<----- adiciona 1 nos bits do resultado
+
+                MENOS_2:
+                shl bl,1       ;<----- desloca resultado 1 casa para esquerda
+                or bl,bh       ;<----- adicina bit (0 ou 1) na casa certa
+                shr dx,1       ;<----- desloca divisor uma casa para direita
+                loop DIV_1      ;<----- refaz procediemento até cx ser igual a zero
+                mov ch,al      ;<----- move o resto para ch
+
+                mov ah,09
+                mov dx,offset msg5           ;printa a mensagem
+                int 21h
+
+                mov dl,bl
+                add dl,030h
+                mov ah,02
+                int 21h
+                
+
+                mov ah,09
+                mov dx,offset msg10           ;printa a mensagem
+                int 21h
+                mov dl,ch
+                add dl,030h
+                mov ah,02
+                int 21h
+
+                jmp FIM
+
+
+                
+
+                ZERO_DIV:
+
+                    mov ah,09
+                    mov dx,offset msg7           ;printa a mensagem
+                    int 21h
+
+
+                    mov ah,09
+                    mov dx,offset msg10           ;printa a mensagem
+                    int 21h
+
+                    mov dl,bl
+                    add dl,030h
+                    mov ah,02
+                    int 21h
+
+                    jmp FIM
+
+                ERRADO:
+                    mov ah,09
+                    mov dx,offset msg9           ;printa a mensagem
+                    int 21h
+
+                    jmp NOVAMENTE
+
+    FIM:
+        mov ah,4ch
+        int 21h
+
 
     main ENDP
 end main
