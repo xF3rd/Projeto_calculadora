@@ -39,7 +39,7 @@
 
         cmp al,033h
         je MULTIPLICACAO1
-
+        
         cmp al,034h
         je DIVICAO1
 
@@ -57,7 +57,6 @@
             mov dx,offset msg3           ;printa a mensagem
             int 21h
 
-
             mov ah,01                     ;pega numero do usuario
             int 21h
 
@@ -67,23 +66,19 @@
             mov dx,offset msg4           ;printa a mensagem
             int 21h
 
-
             mov ah,01                    ;pega numero do usuario
-
             int 21h
 
         
 
             and bl,0fh
+            and al,0fh                    ;transforma ascii em numero
 
-            and al,0fh                    ;transforrma ascii em numero
-
-
-            add bl,al
-            xor ax,ax
-            mov al,bl
+            add bl,al                      ;realiza a soma
+            xor ax,ax                      ;limpa o ax
+            mov al,bl                      ;joga o resultado em al
         
-            mov dl,10
+            mov dl,10                       ; divide o resultado para conseguir imprimir numero com dois digitos
             div dl
         
             mov cl,ah
@@ -96,16 +91,16 @@
         
 
             add bl,030h
-            mov dl,bl
+            mov dl,bl                    ;transforma e printa o resultado
             mov ah,02
             int 21h
 
             add cl,030h
             mov dl,cl
-            mov ah,02
+            mov ah,02                   ;transforma e printa o resultado
             int 21h
 
-            jmp FIM
+            jmp FIM                     ;pula para o fim do programa
               
         SUBTRACAO:
 
@@ -116,7 +111,7 @@
 
             mov ah,01
             int 21h
-            mov bl,al
+            mov bl,al                   ;pega numero do usuario e transforma
             and bl,0fh
 
             mov ah,09
@@ -124,15 +119,15 @@
             int 21h
 
             mov ah,01
-            int 21h
+            int 21h                     ;pega numero do usuario e transforma        
             and al,0fh
 
-            cmp al,bl
-            jge NEGATIVO
+            cmp al,bl                   ;compara o segundo numero com o primeiro
+            jge NEGATIVO                ;se o segundo numero for maior entao o resultado e negativo, pula para resolver isso
 
-            sub bl,al
+            sub bl,al                   ;subtrai os numeros
 
-            add bl,030h
+            add bl,030h                 ;transforma em ascii
 
 
             mov ah,09
@@ -142,15 +137,15 @@
             mov dl,bl
 
             mov ah,02
-            int 21h
+            int 21h                         ;printa o resultado
 
-            jmp FIM
+            jmp FIM                     ;pula para o fim do programa
 
         NEGATIVO:
-            sub bl,al
+            sub bl,al                   ;subtrai os numeros
 
-            neg bl
-            add bl,030h
+            neg bl                      ;inverte o numero
+            add bl,030h                 ;trasforma em ascii
 
 
             mov ah,09
@@ -163,22 +158,21 @@
 
             mov dl,bl
 
-            mov ah,02
+            mov ah,02                      ;printa o resultado
             int 21h
 
-            jmp FIM
+            jmp FIM                     ;pula para o fim do programa
 
 
 
         MULTIPLICACAO:
-
 
             mov ah,09
             mov dx,offset msg3           ;printa a mensagem
             int 21h
 
             mov ah,01
-            int 21h
+            int 21h                       ;pega numero do usuario e transforma
             mov bl,al
             and bl,0fh
 
@@ -187,56 +181,54 @@
             int 21h
 
             mov ah,01
-            int 21h
-
+            int 21h                     ;pega numero do usuario e transforma
             mov cl,al
             and cl,0fh
 
-            cmp cl,9
+            cmp cl,9                    ;compara com nove
             je NOVE1
 
             
             cmp cl,4
-            jg MAIOR4_2
+            jg MAIOR4_2                 ;ve se o numero e maior que 4
 
             cmp cl,4
-            jle ME_IG_4
+            jle ME_IG_4                 ;ve se o numero e menor igual a que 4
 
 
             MAIOR4_2:
-                jmp MAIOR4
+                jmp MAIOR4              ;como je tem limite de distancia e presciso pular para jmp especifico 
 
             NOVE1:
-                jmp NOVE
+                jmp NOVE                 ;como je tem limite de distancia e presciso pular para jmp especifico
 
             ME_IG_2:
 
-                cmp cl,0
-                je ZERO
+                cmp cl,0        
+                je ZERO                 ;compara com zero e pula se for
 
-                mov bh,bl
-                shl bl,1
-                xor ax,ax
-                mov al,2
-                mov dl,cl
+                mov bh,bl                ;salva o numero    
+                shl bl,1                ;anda com o numero 1 vezes para esquerda
+                xor ax,ax               ;limpa ax
+
+                mov al,2                
+                mov dl,cl                ;divide 2 pelo numero multiplicado
                 div dl
                 
-                cmp al,2
+                cmp al,2                 ;compara o resultado com dois
                 je PULA2   
                 
-                cmp ah,0
+                cmp ah,0                 ;compara o resto com 0
                 je PULA
 
                
                 PULA2:
-                    sub bl,bh
-                    dec ah
-                
+                    sub bl,bh           ;subtrai o numero mexido por ele inicialmente
 
                 PULA:
                     xor ax,ax
                     mov al,bl
-                    mov dl,10
+                    mov dl,10           ; divide o resultado para conseguir imprimir numero com dois digitos
                     div dl
 
                     mov bl,al
@@ -247,15 +239,15 @@
                     int 21h
                 
                     mov dl,bl
-                    add dl,30h
+                    add dl,30h                   ;transforma e printa o resultado
                     mov ah,02
                     int 21h
 
                     mov dl,bh
-                    add dl,30h
+                    add dl,30h                    ;transforma e printa o resultado
                     mov ah,02
                     int 21h
-                    jmp FIM
+                    jmp FIM                     ;pula para o fim do programa
             
             ZERO:
 
@@ -264,28 +256,30 @@
                 int 21h
 
                 mov dl,30h
-                mov ah,02
+                mov ah,02                   ;printa 0
                 int 21h
                 jmp FIM
 
             ME_IG_4:
-                cmp cl,2
-                jle ME_IG_2
+                cmp cl,2            ;compara com 2
+                jle ME_IG_2         ;pula se for menor igual a 2
 
-                mov bh,bl
-                shl bl,2
-                xor ax,ax
-                mov al,4
-                mov dl,cl
+                mov bh,bl           ;salva o numero
+                shl bl,2            ;anda com o numero 2 vezes para esquerda
+                xor ax,ax           ;limpa ax
+                mov al,4        
+                mov dl,cl           ;divide 4 pelo numero multiplicado
                 div dl
+                cmp ah,0            ;verifica se o resto e 0
+                je PULA3            ;pula se for 0 
                 VOLTA2:
                     sub bl,bh
-                    dec ah
-                    cmp ah,0
+                    dec ah          ;subtrai o numero mudado por ele inicial,faz n vezes igual ao resto
+                    cmp ah,0    
                     jne VOLTA2
-
+            PULA3:
                 xor ax,ax
-                mov al,bl
+                mov al,bl           ; divide o resultado para conseguir imprimir numero com dois digitos
                 mov dl,10
                 div dl
 
@@ -297,23 +291,24 @@
                 int 21h
                 
                 mov dl,bl
-                add dl,30h
-                mov ah,02
+                add dl,30h                    
+                mov ah,02                   ;transforma e printa o resultado
                 int 21h
 
                 mov dl,bh
-                add dl,30h
+                add dl,30h                  ;transforma e printa o resultado
                 mov ah,02
                 int 21h
-                jmp FIM
+
+                jmp FIM                 ;pula para o fim do programa
 
 
             MAIOR4:
-                mov bh,bl
-                shl bl,3
+                mov bh,bl               ;salva o numero inicial
+                shl bl,3                ;anda com o numero 3 vezes para esquerda
                 xor ax,ax
                 mov al,8
-                mov dl,cl
+                mov dl,cl                ;divide 8 pelo numero multiplicado
                 div dl
 
                 VOLTA:
@@ -343,7 +338,7 @@
                 add dl,30h
                 mov ah,02
                 int 21h
-                jmp FIM
+                jmp FIM                         ;pula para o fim do programa
 
             NOVE:
 
@@ -372,17 +367,8 @@
                 add dl,30h
                 mov ah,02
                 int 21h
-                jmp FIM
+                jmp FIM                 ;pula para o fim do programa
             
-
-            mov ah,09
-            mov dx,offset msg3           ;printa a mensagem
-            int 21h
-
-            mov ah,01
-            int 21h
-            mov bl,al
-            and bl,0fh
 
         DIVICAO:
 
@@ -397,14 +383,12 @@
                 mov bl,al
                 and bl,0fh
 
-
                 mov ah,09
                 mov dx,offset msg4              ;printa a mensagem
                 int 21h
 
                 mov ah,01
                 int 21h                        ;pega segundo numero
-
 
                 mov cl,al
                 and cl,0fh
@@ -461,7 +445,7 @@
                 mov ah,02
                 int 21h
 
-                jmp FIM
+                jmp FIM                     ;pula para o fim do programa
 
 
                 
@@ -482,19 +466,18 @@
                     mov ah,02
                     int 21h
 
-                    jmp FIM
+                    jmp FIM                     ;pula para o fim do programa    
 
                 ERRADO:
                     mov ah,09
                     mov dx,offset msg9           ;printa a mensagem
                     int 21h
 
-                    jmp NOVAMENTE
+                    jmp NOVAMENTE                   
 
     FIM:
-        mov ah,4ch
+        mov ah,4ch          ;fenaliza o programa 
         int 21h
-
 
     main ENDP
 end main
