@@ -272,6 +272,7 @@
                 div dl
                 cmp ah,0            ;verifica se o resto e 0
                 je PULA3            ;pula se for 0 
+                
                 VOLTA2:
                     sub bl,bh
                     dec ah          ;subtrai o numero mudado por ele inicial,faz n vezes igual ao resto
