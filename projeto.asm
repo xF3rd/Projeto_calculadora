@@ -39,7 +39,6 @@
 
         cmp al,033h
         je MULTIPLICACAO1
-        
 
         cmp al,034h
         je DIVICAO1
@@ -58,6 +57,7 @@
             mov dx,offset msg3           ;printa a mensagem
             int 21h
 
+
             mov ah,01                     ;pega numero do usuario
             int 21h
 
@@ -67,13 +67,17 @@
             mov dx,offset msg4           ;printa a mensagem
             int 21h
 
+
             mov ah,01                    ;pega numero do usuario
+
             int 21h
 
         
 
             and bl,0fh
+
             and al,0fh                    ;transforrma ascii em numero
+
 
             add bl,al
             xor ax,ax
@@ -167,6 +171,7 @@
 
 
         MULTIPLICACAO:
+
 
             mov ah,09
             mov dx,offset msg3           ;printa a mensagem
@@ -370,7 +375,14 @@
                 jmp FIM
             
 
+            mov ah,09
+            mov dx,offset msg3           ;printa a mensagem
+            int 21h
 
+            mov ah,01
+            int 21h
+            mov bl,al
+            and bl,0fh
 
         DIVICAO:
 
@@ -385,12 +397,14 @@
                 mov bl,al
                 and bl,0fh
 
+
                 mov ah,09
                 mov dx,offset msg4              ;printa a mensagem
                 int 21h
 
                 mov ah,01
                 int 21h                        ;pega segundo numero
+
 
                 mov cl,al
                 and cl,0fh
@@ -480,6 +494,7 @@
     FIM:
         mov ah,4ch
         int 21h
+
 
     main ENDP
 end main
