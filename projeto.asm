@@ -2,7 +2,7 @@ TITLE Fernando Bordin Correa RA:20098174
 .MODEL SMALL
 .DATA
     msg1 db 10,"1 - Soma",10,"2 - Subtracao",10,"3 - Multiplicacao",10,"4 - Divicao",10,"$"
-    msg2 db "Qual operacao:",10,"$"
+    msg2 db 10,"Qual operacao:",10,"$"
     msg3 db 10,"Primeiro numero: $"
     msg4 db 10,"Segundo numero: $"
     msg5 db 10,"Resultado:$"
