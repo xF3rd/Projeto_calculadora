@@ -311,15 +311,20 @@
                 mov dl,cl                ;divide 8 pelo numero multiplicado
                 div dl
 
+                cmp ah,0
+                je PULA4            
+
                 VOLTA:
                     sub bl,bh
-                    dec ah
+                    dec ah                  ;subtrai o numero mudado por ele inicial,faz n vezes igual ao resto
                     cmp ah,0
                     jne VOLTA
 
+                PULA4:
+
                 xor ax,ax
                 mov al,bl
-                mov dl,10
+                mov dl,10                   ; divide o resultado para conseguir imprimir numero com dois digitos
                 div dl
 
                 mov bl,al
@@ -330,24 +335,25 @@
                 int 21h
                 
                 mov dl,bl
-                add dl,30h
+                add dl,30h                    ;transforma e printa o resultado
                 mov ah,02
                 int 21h
 
                 mov dl,bh
-                add dl,30h
+                add dl,30h                      ;transforma e printa o resultado
                 mov ah,02
                 int 21h
+
                 jmp FIM                         ;pula para o fim do programa
 
             NOVE:
 
-                mov bh,bl
-                shl bl,3
-                add bl,bh
+                mov bh,bl                       ;SALVA NUMERO INICIAL
+                shl bl,3                        ;anda com o numero 3 vezes para esquerda
+                add bl,bh                       ;soma numero inicial pelo numero mexido
 
                 xor ax,ax
-                mov al,bl
+                mov al,bl                        ; divide o resultado para conseguir imprimir numero com dois digitos
                 mov dl,10
                 div dl
 
@@ -359,14 +365,15 @@
                 int 21h
                 
                 mov dl,bl
-                add dl,30h
+                add dl,30h                    ;transforma e printa o resultado
                 mov ah,02
                 int 21h
 
                 mov dl,bh
                 add dl,30h
-                mov ah,02
+                mov ah,02                   ;transforma e printa o resultado
                 int 21h
+
                 jmp FIM                 ;pula para o fim do programa
             
 
@@ -379,7 +386,7 @@
                 int 21h
 
                 mov ah,01
-                int 21h                        ;pega primeiro numero
+                int 21h                        ;pega primeiro numero e transforma
                 mov bl,al
                 and bl,0fh
 
@@ -388,7 +395,7 @@
                 int 21h
 
                 mov ah,01
-                int 21h                        ;pega segundo numero
+                int 21h                        ;pega segundo numero e transforma
 
                 mov cl,al
                 and cl,0fh
@@ -399,40 +406,40 @@
                 cmp cl,0
                 je ERRADO
 
-                mov dh,cl       ;<---- move o divisor para dh
+                mov dh,cl       ;move o primeiro numero para dh
 
-                xor ax,ax       ;<---- zera ax para armazenar o dividendo
-                mov al,bl       ;<---- move o dividendo para al
-                xor dl,dl       ;<---- zera dl para poder manipular o divisor 
-                xor bx,bx       ;<---- zera bx para armazenar o resultado
+                xor ax,ax       ;limpa ax
+                mov al,bl       ;move o segundo numero para al
+                xor dl,dl       ;limpa dl 
+                xor bx,bx       ;limpa dl
 
 
 
-                mov cx,9       ;<----- adiciona 9 no contador para trabalhar com 9 bits
+                mov cx,9       ;contador vai para 9
 
                 DIV_1:
-                sub ax,dx      ;<----- subtrai divisor do dividendo
-                jns MENOS_1      ;<----- se o resultado da divisão não for negativo não reverte o processo
-                add ax,dx      ;<----- reverte o processo 
-                mov bh,0       ;<----- adiciona 0 nos bits do resultado
-                jmp MENOS_2      ;<----- pula para 
+                sub ax,dx      ;subtrai segundo pelo primeiro
+                jns MENOS_1      ;se for negativo nao reverte
+                add ax,dx      ;reverte o processo
+                mov bh,0       ;0 no resultado 
+                jmp MENOS_2      ;pula
 
                 MENOS_1:
-                mov bh,1       ;<----- adiciona 1 nos bits do resultado
+                mov bh,1       ;1 no resultado
 
                 MENOS_2:
-                shl bl,1       ;<----- desloca resultado 1 casa para esquerda
-                or bl,bh       ;<----- adicina bit (0 ou 1) na casa certa
-                shr dx,1       ;<----- desloca divisor uma casa para direita
-                loop DIV_1      ;<----- refaz procediemento até cx ser igual a zero
-                mov ch,al      ;<----- move o resto para ch
+                shl bl,1       ;anda um para esquerda
+                or bl,bh       
+                shr dx,1       ;anda pra direita
+                loop DIV_1      ;refaz ate o contador ir igual a zero
+                mov ch,al      ;resto vai para ch
 
                 mov ah,09
                 mov dx,offset msg5           ;printa a mensagem
                 int 21h
 
                 mov dl,bl
-                add dl,030h
+                add dl,030h                   ;transforma e printa o resultado
                 mov ah,02
                 int 21h
                 
@@ -440,8 +447,9 @@
                 mov ah,09
                 mov dx,offset msg10           ;printa a mensagem
                 int 21h
+
                 mov dl,ch
-                add dl,030h
+                add dl,030h                     ;transforma e printa o resultado
                 mov ah,02
                 int 21h
 
@@ -463,7 +471,7 @@
 
                     mov dl,bl
                     add dl,030h
-                    mov ah,02
+                    mov ah,02                       ;transforma e printa o resultado
                     int 21h
 
                     jmp FIM                     ;pula para o fim do programa    
@@ -476,7 +484,7 @@
                     jmp NOVAMENTE                   
 
     FIM:
-        mov ah,4ch          ;fenaliza o programa 
+        mov ah,4ch          ;finaliza o programa 
         int 21h
 
     main ENDP
